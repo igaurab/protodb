@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"net"
 	"os"
 )
@@ -31,25 +29,6 @@ func main() {
 
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
-
-	buf := make([]byte, 1024)
-	var requestBuffer bytes.Buffer
-
-	for {
-		n, err := conn.Read(buf)
-		if err != nil {
-			if err == io.EOF {
-				// End of data
-				break
-			}
-			fmt.Println(err)
-			break
-		}
-
-		requestBuffer.Write(buf[:n])
-	}
-
-	requestStr := requestBuffer.String()
-
-	fmt.Println("Recieved", requestStr)
+	client := newClient(conn)
+	client.read()
 }
