@@ -16,6 +16,6 @@ func createDB(db_path string) error {
 		}
 		defer file.Close()
 	}
-
+	fmt.Println("Created new database: ", db_path)
 	return nil
 }

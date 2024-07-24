@@ -7,11 +7,15 @@ import (
 )
 
 func main() {
+
 	ln, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
+	hub := newHub()
+	go hub.run()
 
 	println("Starting server at :8080")
 	var conn_numbers int = 0
@@ -22,13 +26,8 @@ func main() {
 			continue
 		}
 		println("Accepting connection: ", conn_numbers)
-		go handleConnection(conn)
+		c := newClient(conn, hub.commands, hub.registrations, hub.deregistrations)
+		go c.read()
 		conn_numbers++
 	}
-}
-
-func handleConnection(conn net.Conn) {
-	defer conn.Close()
-	client := newClient(conn)
-	client.read()
 }
